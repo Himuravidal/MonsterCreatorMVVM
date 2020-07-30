@@ -1,17 +1,9 @@
 package com.crisspian.monstercreator_mvvm.model;
 
 public class MonsterGenerator {
-    private MonsterAttributes monsterAttributes;
-    private String name = "";
-    private int drawable = 0;
 
-    public MonsterGenerator(MonsterAttributes monsterAttributes, String name, int drawable) {
-        this.monsterAttributes = monsterAttributes;
-        this.name = name;
-        this.drawable = drawable;
-    }
-
-    public Monster monsterGenerate() {
+    //Tuve que modificar lo que recibia este metodo, faltaban los atributos y estaban puestos como parte de la clase y constructor
+    public static Monster monsterGenerate(MonsterAttributes monsterAttributes, String name, int drawable) {
         int monsterPoint = 4 * monsterAttributes.getIntelligence()
                 + 3 * monsterAttributes.getEvilness()
                 + 2 * monsterAttributes.getUgliness();

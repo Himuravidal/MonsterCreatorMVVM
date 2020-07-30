@@ -29,7 +29,7 @@ public class MonsterAdapter extends RecyclerView.Adapter<MonsterAdapter.MonsterV
     public void onBindViewHolder(@NonNull MonsterViewHolder holder, int position) {
         Monster monster = monsterList.get(position);
         Glide.with(holder.imageViewMonster.getContext()).load(monster.getDrawable()).into(holder.imageViewMonster);
-        holder.monsterPoint.setText(monster.getMonsterPoint());
+        holder.monsterPoint.setText(String.valueOf(monster.getMonsterPoint()));
         holder.name.setText(monster.getName());
     }
 
@@ -40,6 +40,11 @@ public class MonsterAdapter extends RecyclerView.Adapter<MonsterAdapter.MonsterV
         } else {
             return 0;
         }
+    }
+
+    public void updateMosters(List<Monster> monsters) {
+        monsterList = monsters;
+        notifyDataSetChanged();
     }
 
 

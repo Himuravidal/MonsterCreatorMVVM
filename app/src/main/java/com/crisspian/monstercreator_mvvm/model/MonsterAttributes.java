@@ -6,6 +6,13 @@ public class MonsterAttributes {
     private int ugliness = 0;
     private int evilness = 0;
 
+    //Add this constructor.
+    public MonsterAttributes(int intelligence, int ugliness, int evilness) {
+        this.intelligence = intelligence;
+        this.ugliness = ugliness;
+        this.evilness = evilness;
+    }
+
     public int getIntelligence() {
         return intelligence;
     }

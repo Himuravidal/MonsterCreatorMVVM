@@ -1,5 +1,6 @@
 package com.crisspian.monstercreator_mvvm.view;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.crisspian.monstercreator_mvvm.R;
 import com.crisspian.monstercreator_mvvm.databinding.LayoutMonsterBottomFragmentBinding;
 import com.crisspian.monstercreator_mvvm.model.MonsterImage;
 import com.crisspian.monstercreator_mvvm.view.adapter.MonsterImageAdapter;
+import com.crisspian.monstercreator_mvvm.viewmodel.ViewModelCreateMonster;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
@@ -28,8 +31,18 @@ public class MonsterBottomDialogFragment extends BottomSheetDialogFragment imple
     private LayoutMonsterBottomFragmentBinding binding;
     private MonsterImageAdapter adapter;
     private List<MonsterImage> monsterImageList = new ArrayList<>();
+    private ViewModelCreateMonster viewModelCreateMonster;
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        /*
+        a Share View Model must share and activity so, if you put "this" only work on activities
+        no fragments. is getActivity instead.
+        */
+        viewModelCreateMonster = new ViewModelProvider(getActivity()).get(ViewModelCreateMonster.class);
+    }
 
     @Nullable
     @Override
@@ -45,8 +58,6 @@ public class MonsterBottomDialogFragment extends BottomSheetDialogFragment imple
         RecyclerView recyclerView = binding.avatarRv;
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3 ));
         recyclerView.setAdapter(adapter);
-
-
     }
 
 
@@ -62,7 +73,7 @@ public class MonsterBottomDialogFragment extends BottomSheetDialogFragment imple
 
     @Override
     public void monsterClicked(MonsterImage monsterImage) {
-        NavHostFragment.findNavController(getParentFragment()).popBackStack();
-       // Toast.makeText(getContext(), monsterImage.getDrawable(), Toast.LENGTH_SHORT).show();
+        viewModelCreateMonster.drawableSelect(monsterImage.getDrawable());
+     //   NavHostFragment.findNavController(getParentFragment()).popBackStack();
     }
 }
