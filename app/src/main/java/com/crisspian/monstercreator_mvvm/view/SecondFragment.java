@@ -2,30 +2,35 @@ package com.crisspian.monstercreator_mvvm.view;
 
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.bumptech.glide.Glide;
+
 import com.crisspian.monstercreator_mvvm.R;
 import com.crisspian.monstercreator_mvvm.databinding.FragmentSecondBinding;
 import com.crisspian.monstercreator_mvvm.model.AttributeStore;
 import com.crisspian.monstercreator_mvvm.model.AttributeType;
-import com.crisspian.monstercreator_mvvm.model.AttributeValue;
+
 import com.crisspian.monstercreator_mvvm.model.Monster;
-import com.crisspian.monstercreator_mvvm.model.MonsterImage;
-import com.crisspian.monstercreator_mvvm.view.adapter.MonsterImageAdapter;
+
 import com.crisspian.monstercreator_mvvm.viewmodel.ViewModelCreateMonster;
 
 public class SecondFragment extends Fragment {
@@ -45,14 +50,11 @@ public class SecondFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_second, container, false);
+        binding.setViewmodel(viewModelCreateMonster);
         configureUI();
         configureSpinnersAdapter();
         configureSpinnerLister();
-
-         name = binding.nameEditText.getText().toString();
-         viewModelCreateMonster.nameInsert(name);
-
         viewModelCreateMonster.monsterLive().observe(getViewLifecycleOwner(), new Observer<Monster>() {
             @Override
             public void onChanged(Monster monster) {
@@ -60,9 +62,19 @@ public class SecondFragment extends Fragment {
                     binding.tapLabelTv.setVisibility(View.INVISIBLE);
                 }
                 binding.avatarIv.setImageResource(monster.getDrawable());
-                //  Glide.with(getContext()).load(monster.getDrawable()).into(binding.avatarIv);
                 binding.monsterPointTv.setText(String.valueOf(monster.getMonsterPoint()));
                 binding.nameEditText.setText(monster.getName());
+            }
+        });
+        viewModelCreateMonster.saveState().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    Toast.makeText(getContext(), "Se guardo exitosamente", Toast.LENGTH_SHORT).show();
+                    NavHostFragment.findNavController(SecondFragment.this).popBackStack();
+                } else {
+                    Toast.makeText(getContext(), "Ocurrio un error al guardar", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -79,14 +91,6 @@ public class SecondFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewModelCreateMonster.saveMonster();
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
-            }
-        });
     }
 
     private void configureSpinnersAdapter() {
@@ -132,6 +136,9 @@ public class SecondFragment extends Fragment {
     }
 
     private void configureUI() {
+        viewModelCreateMonster.nameInsert("");
+        viewModelCreateMonster.drawableSelect(0);
+        viewModelCreateMonster.renewState();
     }
 
 }

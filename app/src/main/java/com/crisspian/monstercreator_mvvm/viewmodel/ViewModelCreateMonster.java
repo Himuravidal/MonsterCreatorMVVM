@@ -5,11 +5,16 @@ import android.util.Log;
 import android.widget.Switch;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.crisspian.monstercreator_mvvm.databinding.FragmentSecondBinding;
 import com.crisspian.monstercreator_mvvm.model.AttributeStore;
 import com.crisspian.monstercreator_mvvm.model.AttributeType;
 import com.crisspian.monstercreator_mvvm.model.Monster;
@@ -17,13 +22,15 @@ import com.crisspian.monstercreator_mvvm.model.MonsterAttributes;
 import com.crisspian.monstercreator_mvvm.model.MonsterGenerator;
 import com.crisspian.monstercreator_mvvm.model.repository.MonsterRepository;
 import com.crisspian.monstercreator_mvvm.model.repository.RepositoryInterface;
+import com.crisspian.monstercreator_mvvm.view.SecondFragment;
 
 public class ViewModelCreateMonster extends AndroidViewModel {
 
     private MonsterGenerator monsterGenerator;
     private MonsterRepository monsterRepository;
     private Monster monster;
-    private String name = "";
+
+    public String name = "";
     private int intelligence = 0;
     private int ugliness = 0;
     private int evilness = 0;
@@ -37,8 +44,16 @@ public class ViewModelCreateMonster extends AndroidViewModel {
         saveLiveData = new MutableLiveData<>();
         monsterRepository = new MonsterRepository(application);
     }
+
     //this will return the monsterLiveData to observe on secondFragment
-    public LiveData<Monster> monsterLive() { return mutableMonsterLiveData; }
+    public LiveData<Monster> monsterLive() {
+        return mutableMonsterLiveData;
+    }
+
+    //this will return the state of save
+    public LiveData<Boolean> saveState() {
+        return saveLiveData;
+    }
 
     //this obtain the data, create the monster and update the live data monster object.
     public void updateMonster() {
@@ -57,7 +72,7 @@ public class ViewModelCreateMonster extends AndroidViewModel {
         updateMonster();
     }
 
-    public void attributeSelected(AttributeType attributeType,int position) {
+    public void attributeSelected(AttributeType attributeType, int position) {
         switch (attributeType) {
             case INTELLIGENCE:
                 intelligence = AttributeStore.getIntelligenceAttributeValues().get(position).getValue();
@@ -69,14 +84,13 @@ public class ViewModelCreateMonster extends AndroidViewModel {
         updateMonster();
     }
 
-
-
     public void saveMonster() {
         monsterRepository.saveMonster(monster);
-        drawable = 0;
         saveLiveData.setValue(true);
     }
 
-
+    public void renewState() {
+        saveLiveData.setValue(false);
+    }
 
 }
